@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+!.env.e2e.example
+*.local
+playwright-report/
+test-results/
+coverage/
+.supabase/
+supabase/.temp/
+supabase/.branches/
+*.tsbuildinfo
+.DS_Store

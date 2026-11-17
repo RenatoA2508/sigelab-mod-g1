@@ -1,0 +1,7 @@
+node_modules/
+dist/
+coverage/
+docs/mockup/
+package-lock.json
+.env*
+supabase/.temp/
