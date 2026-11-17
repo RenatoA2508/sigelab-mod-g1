@@ -58,6 +58,10 @@ Se preparó un objeto devuelto y se verificó que no apareciera en el catálogo 
 
 Se retiraron los cuatro hallazgos ficticios y sus fotografías mediante Storage, y las dos cuentas temporales de acceso. La comprobación final encontró cero hallazgos, reportes, fotografías y cuentas temporales; el correo del responsable sigue autorizado y las dos migraciones siguen aplicadas.
 
+## Verificación en GitHub
+
+El código se subió a `main`. GitHub Actions no llegó a iniciar ningún paso: GitHub informó que la cuenta está bloqueada por un problema de facturación. La ejecución puede revisarse [aquí](https://github.com/RenatoA2508/sigelab-mod-g1/actions/runs/44100135557). Las 30 pruebas, ESLint, TypeScript, la compilación, el formato y la auditoría de producción se comprobaron localmente; esta última encontró cero vulnerabilidades.
+
 ## Límites de la entrega
 
 La verificación corresponde al primer incremento. El frontend está preparado para ejecutarse localmente o compilarse para un hosting estático; el backend remoto y las migraciones están configurados. No se ha actualizado TestRail automáticamente.
