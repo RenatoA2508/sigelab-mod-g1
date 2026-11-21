@@ -15,22 +15,7 @@ type Props = {
 
 export function CatalogView({ query, page, setPage }: Props) {
   return (
-    <>
-      <header className="catalog-intro">
-        <div>
-          <p className="eyebrow">Objetos encontrados · Comunidad EPN</p>
-          <h1>¿Perdiste algo?</h1>
-          <p className="lead">
-            Consulta lo que se encontró en los laboratorios.
-            <br />
-            Tu próxima visita a LABFIS podría ser para recuperarlo.
-          </p>
-        </div>
-        <div className="catalog-intro-mark" aria-hidden="true">
-          <Archive size={58} strokeWidth={1.25} />
-          <span>LABFIS</span>
-        </div>
-      </header>
+    <section className="panel catalog-panel">
       <div className="catalog-toolbar">
         <h2 id="catalog-heading">Objetos encontrados</h2>
         <button
@@ -128,6 +113,6 @@ export function CatalogView({ query, page, setPage }: Props) {
           </p>
         </>
       )}
-    </>
+    </section>
   )
 }

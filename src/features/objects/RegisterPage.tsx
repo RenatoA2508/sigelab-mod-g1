@@ -78,13 +78,6 @@ export function RegisterPage() {
   }
   return (
     <>
-      <header className="page-intro">
-        <p className="eyebrow">Registro LABFIS</p>
-        <h1>Registrar un hallazgo</h1>
-        <p className="lead">
-          Completa los datos para que la comunidad pueda reconocerlo y recuperar lo que perdió.
-        </p>
-      </header>
       <div className="registration-layout">
         <section className="panel registration-panel" aria-labelledby="form-title">
           <div className="panel-topline">
@@ -92,7 +85,7 @@ export function RegisterPage() {
               <Check size={17} aria-hidden="true" />
             </span>
             <div>
-              <h2 id="form-title">Información del objeto</h2>
+              <h2 id="form-title">Registrar un hallazgo</h2>
               <p className="muted">
                 Los campos con <span aria-hidden="true">*</span> son obligatorios.
               </p>
@@ -278,7 +271,7 @@ export function RegisterPage() {
             </fieldset>
           </form>
         </section>
-        <aside className="registration-aside">
+        <aside className="panel registration-aside">
           <div className="aside-icon">
             <ShieldCheck size={27} aria-hidden="true" />
           </div>

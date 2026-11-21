@@ -1,81 +1,141 @@
-import { useState } from 'react'
-import { NavLink, Outlet, Link } from 'react-router-dom'
-import { ArrowUpRight, LogOut, ShieldCheck } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Link, NavLink, Outlet, useMatch } from 'react-router-dom'
+import { LogOut, Menu, PackageSearch, ShieldCheck, X } from 'lucide-react'
 import { useAuth } from '../features/auth/AuthProvider'
 import { ErrorNotice } from './Feedback'
 
+function Sidebar({ close }: { close?: () => void }) {
+  return (
+    <div className="sidebar">
+      <Link className="brand" to="/objetos" onClick={close} aria-label="LABFIS, inicio">
+        <span className="brand-mark" aria-hidden="true">
+          L
+        </span>
+        <span>
+          <strong>LABFIS</strong>
+          <small>Gestión de laboratorios</small>
+        </span>
+      </Link>
+      {close && (
+        <button className="close-menu" onClick={close} aria-label="Cerrar menú">
+          <X size={18} />
+        </button>
+      )}
+      <nav aria-label="Módulos LABFIS">
+        <p className="nav-label">Módulos</p>
+        <NavLink to="/objetos" className="nav" onClick={close}>
+          <PackageSearch size={18} aria-hidden="true" /> Objetos perdidos
+        </NavLink>
+      </nav>
+      <p className="sidebar-foot">SIGELAB · Facultad de Ingeniería de Sistemas</p>
+    </div>
+  )
+}
+
 export function Layout() {
   const { isStaff, session, signOut } = useAuth()
+  const catalog = useMatch('/objetos')
+  const register = useMatch('/registrar')
   const [error, setError] = useState(false)
+  const drawer = useRef<HTMLDialogElement>(null)
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 781px)')
+    function closeOnDesktop() {
+      if (desktop.matches) drawer.current?.close()
+    }
+    desktop.addEventListener('change', closeOnDesktop)
+    return () => desktop.removeEventListener('change', closeOnDesktop)
+  }, [])
+
   return (
-    <>
+    <div className="app">
       <a className="skip-link" href="#main-content">
         Saltar al contenido
       </a>
-      <div className="institution">
-        <div className="container institution-inner">
-          <span>LABFIS · ESCUELA POLITÉCNICA NACIONAL</span>
-          <span className="institution-extra">Comunidad que cuida lo que encuentras</span>
-        </div>
-      </div>
-      <header className="site-header">
-        <div className="container header-inner">
-          <Link className="brand" to="/objetos" aria-label="SIGELAB, inicio">
-            <span className="brand-mark" aria-hidden="true" />
-            <span>
-              <strong>SIGELAB</strong>
-              <small>Objetos perdidos · LABFIS</small>
-            </span>
-          </Link>
-          <nav aria-label="Navegación principal">
-            <NavLink to="/objetos">Objetos encontrados</NavLink>
-            <NavLink to="/registrar">Registrar hallazgo</NavLink>
-          </nav>
-          {session ? (
+      <aside className="desktop-sidebar">
+        <Sidebar />
+      </aside>
+      <dialog
+        className="menu-dialog"
+        ref={drawer}
+        aria-label="Menú principal"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) drawer.current?.close()
+        }}
+      >
+        <Sidebar close={() => drawer.current?.close()} />
+      </dialog>
+      <div className="main">
+        <header className="topbar">
+          <div className="topbar-title">
             <button
-              className="header-access"
-              onClick={() => {
-                setError(false)
-                void signOut().catch(() => setError(true))
-              }}
+              className="menu-toggle"
+              aria-label="Abrir menú"
+              aria-haspopup="dialog"
+              onClick={() => drawer.current?.showModal()}
             >
-              <LogOut size={16} aria-hidden="true" />
-              Cerrar sesión
+              <Menu size={22} aria-hidden="true" />
             </button>
-          ) : (
-            <Link className="header-access" to="/acceso">
-              <ShieldCheck size={16} aria-hidden="true" />
-              Personal LABFIS
-            </Link>
-          )}
-        </div>
-      </header>
-      <main id="main-content" className="container main-container" tabIndex={-1}>
-        {error && (
-          <ErrorNotice title="No pudimos cerrar tu sesión.">
-            Revisa tu conexión y vuelve a intentarlo.
-          </ErrorNotice>
-        )}
-        {isStaff && (
-          <p className="staff-indicator">
-            <ShieldCheck size={14} aria-hidden="true" />
-            Sesión autorizada de LABFIS
-          </p>
-        )}
-        <Outlet />
-      </main>
-      <footer className="site-footer">
-        <div className="container footer-inner">
-          <div>
-            <strong>SIGELAB</strong>
-            <p>Gestión de objetos encontrados en los laboratorios.</p>
+            <div>
+              <strong>LABFIS</strong>
+              <span className="top-sub"> · Sistema modular</span>
+            </div>
           </div>
+          <div className="topbar-actions">
+            <span className="pill">Supabase configurado</span>
+            {session ? (
+              <button
+                className="button button--secondary button--small"
+                onClick={() => {
+                  setError(false)
+                  void signOut().catch(() => setError(true))
+                }}
+              >
+                <LogOut size={15} aria-hidden="true" />
+                Cerrar sesión
+              </button>
+            ) : (
+              <Link className="button button--secondary button--small" to="/acceso">
+                <ShieldCheck size={15} aria-hidden="true" />
+                Personal LABFIS
+              </Link>
+            )}
+          </div>
+        </header>
+        <main id="main-content" className="content" tabIndex={-1}>
+          {error && (
+            <ErrorNotice title="No pudimos cerrar tu sesión.">
+              Revisa tu conexión y vuelve a intentarlo.
+            </ErrorNotice>
+          )}
+          {isStaff && (
+            <p className="staff-indicator">
+              <ShieldCheck size={14} aria-hidden="true" />
+              Sesión autorizada de LABFIS
+            </p>
+          )}
+          {(catalog || (register && isStaff)) && (
+            <header className="page-intro">
+              <p className="eyebrow">Módulo 01 · SIGELAB</p>
+              <h1>Objetos perdidos</h1>
+              <p className="lead">
+                Registro y consulta de objetos encontrados en los laboratorios.
+              </p>
+              <nav className="tabs" aria-label="Gestión de objetos perdidos">
+                <NavLink to="/objetos">Consultar objetos</NavLink>
+                <NavLink to="/registrar">Registrar hallazgo</NavLink>
+              </nav>
+            </header>
+          )}
+          <Outlet />
+        </main>
+        <footer>
+          LABFIS · SIGELAB ·{' '}
           <a href="https://www.epn.edu.ec" target="_blank" rel="noreferrer">
             Escuela Politécnica Nacional
-            <ArrowUpRight size={14} aria-hidden="true" />
           </a>
-        </div>
-      </footer>
-    </>
+        </footer>
+      </div>
+    </div>
   )
 }

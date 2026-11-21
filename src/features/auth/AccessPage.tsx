@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { LockKeyhole, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from './AuthProvider'
 import { ErrorNotice, Loading } from '../../components/Feedback'
@@ -76,25 +76,9 @@ export function AccessPage() {
   }
   return (
     <div className="access-layout">
-      <section className="access-intro">
-        <p className="eyebrow">Personal autorizado</p>
-        <h1>Un hallazgo puede volver a su dueño.</h1>
-        <p className="lead">
-          Registra los objetos que llegan a LABFIS para que la comunidad pueda reconocerlos.
-        </p>
-        <div className="access-note">
-          <LockKeyhole size={20} aria-hidden="true" />
-          <p>
-            El registro está reservado al personal autorizado. Los estudiantes y docentes pueden
-            consultar el catálogo sin iniciar sesión.
-          </p>
-        </div>
-      </section>
       <section className="panel access-panel">
-        <div className="panel-icon">
-          <ShieldIcon />
-        </div>
-        <h2>{creating ? 'Activar cuenta de LABFIS' : 'Iniciar sesión'}</h2>
+        <p className="eyebrow">Personal LABFIS</p>
+        <h1>{creating ? 'Activar cuenta de LABFIS' : 'Iniciar sesión'}</h1>
         <p className="muted">
           {creating
             ? 'Usa el correo que el responsable autorizó para LABFIS.'
@@ -157,11 +141,10 @@ export function AccessPage() {
         >
           {creating ? 'Ya tengo una cuenta' : 'Es mi primer acceso'}
         </button>
+        <p className="field-help">
+          Los estudiantes y docentes pueden consultar el catálogo sin iniciar sesión.
+        </p>
       </section>
     </div>
   )
-}
-
-function ShieldIcon() {
-  return <LockKeyhole size={24} aria-hidden="true" />
 }
