@@ -33,7 +33,8 @@ function Sidebar({ close }: { close?: () => void }) {
 }
 
 export function Layout() {
-  const { isStaff, session, signOut } = useAuth()
+  const { isStaff, session, loading, roleError, signOut } = useAuth()
+  const staffView = Boolean(session && isStaff && !loading && !roleError)
   const catalog = useMatch('/objetos')
   const register = useMatch('/registrar')
   const [error, setError] = useState(false)
@@ -107,23 +108,27 @@ export function Layout() {
               Revisa tu conexión y vuelve a intentarlo.
             </ErrorNotice>
           )}
-          {isStaff && (
+          {staffView && (
             <p className="staff-indicator">
               <ShieldCheck size={14} aria-hidden="true" />
               Sesión autorizada de LABFIS
             </p>
           )}
-          {(catalog || (register && isStaff)) && (
+          {(catalog || (register && staffView)) && (
             <header className="page-intro">
               <p className="eyebrow">Módulo 01 · SIGELAB</p>
               <h1>Objetos perdidos</h1>
               <p className="lead">
-                Registro y consulta de objetos encontrados en los laboratorios.
+                {staffView
+                  ? 'Registro y consulta de objetos encontrados en los laboratorios.'
+                  : 'Consulta los objetos encontrados en los laboratorios.'}
               </p>
-              <nav className="tabs" aria-label="Gestión de objetos perdidos">
-                <NavLink to="/objetos">Consultar objetos</NavLink>
-                <NavLink to="/registrar">Registrar hallazgo</NavLink>
-              </nav>
+              {staffView && (
+                <nav className="tabs" aria-label="Gestión de objetos perdidos">
+                  <NavLink to="/objetos">Consultar objetos</NavLink>
+                  <NavLink to="/registrar">Registrar hallazgo</NavLink>
+                </nav>
+              )}
             </header>
           )}
           <Outlet />

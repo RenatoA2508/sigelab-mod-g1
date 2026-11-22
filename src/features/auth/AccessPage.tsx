@@ -41,7 +41,7 @@ function PasswordField({
           disabled={inputProps.disabled}
           onClick={() => setVisible(!visible)}
         >
-          {visible ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+          {visible ? <Eye size={18} aria-hidden="true" /> : <EyeOff size={18} aria-hidden="true" />}
         </button>
       </div>
       {error ? (

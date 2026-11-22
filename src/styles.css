@@ -264,10 +264,13 @@ h3 {
   color: var(--muted);
   line-height: 1.6;
 }
+.page-intro {
+  margin-bottom: 19px;
+}
 .tabs {
   display: flex;
   gap: 8px;
-  margin: 26px 0 19px;
+  margin-top: 26px;
   flex-wrap: wrap;
 }
 .tabs a {
