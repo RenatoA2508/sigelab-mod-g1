@@ -1,9 +1,63 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ComponentProps } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { Mail } from 'lucide-react'
+import { Eye, EyeOff, Mail } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
 import { useAuth } from './AuthProvider'
 import { ErrorNotice, Loading } from '../../components/Feedback'
+
+function PasswordField({
+  id,
+  label,
+  visibilityLabel = 'contraseña',
+  hint,
+  error,
+  ...inputProps
+}: ComponentProps<'input'> & {
+  id: string
+  label: string
+  visibilityLabel?: string
+  hint?: string
+  error?: string
+}) {
+  const [visible, setVisible] = useState(false)
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <div className="password-control">
+        <input
+          {...inputProps}
+          id={id}
+          name={id}
+          type={visible ? 'text' : 'password'}
+          required
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error || hint ? `${id}-message` : undefined}
+        />
+        <button
+          type="button"
+          className="password-toggle"
+          aria-controls={id}
+          aria-label={`${visible ? 'Ocultar' : 'Mostrar'} ${visibilityLabel}`}
+          disabled={inputProps.disabled}
+          onClick={() => setVisible(!visible)}
+        >
+          {visible ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+        </button>
+      </div>
+      {error ? (
+        <p id={`${id}-message`} className="field-error" role="alert">
+          {error}
+        </p>
+      ) : (
+        hint && (
+          <p id={`${id}-message`} className="field-help">
+            {hint}
+          </p>
+        )
+      )}
+    </div>
+  )
+}
 
 export function AccessPage() {
   const { session, loading, isStaff, roleError } = useAuth()
@@ -11,6 +65,8 @@ export function AccessPage() {
   const [creating, setCreating] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [confirmation, setConfirmation] = useState('')
+  const [confirmationChecked, setConfirmationChecked] = useState(false)
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
@@ -42,9 +98,14 @@ export function AccessPage() {
   async function submit(event: React.SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     if (pending) return
-    setPending(true)
     setError('')
     setNotice('')
+    if (creating && password !== confirmation) {
+      setConfirmationChecked(true)
+      event.currentTarget.querySelector<HTMLInputElement>('#password-confirmation')?.focus()
+      return
+    }
+    setPending(true)
     try {
       if (creating) {
         const { data, error: failure } = await supabase.auth.signUp({
@@ -105,21 +166,33 @@ export function AccessPage() {
               disabled={pending}
             />
           </div>
-          <div className="field">
-            <label htmlFor="password">Contraseña</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete={creating ? 'new-password' : 'current-password'}
-              minLength={creating ? 8 : undefined}
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+          <PasswordField
+            key={creating ? 'signup' : 'login'}
+            id="password"
+            label="Contraseña"
+            autoComplete={creating ? 'new-password' : 'current-password'}
+            minLength={creating ? 8 : undefined}
+            hint={creating ? 'Usa al menos 8 caracteres.' : undefined}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            disabled={pending}
+          />
+          {creating && (
+            <PasswordField
+              id="password-confirmation"
+              label="Confirmar contraseña"
+              visibilityLabel="confirmación de contraseña"
+              autoComplete="new-password"
+              value={confirmation}
+              onChange={(e) => setConfirmation(e.target.value)}
+              error={
+                confirmationChecked && confirmation !== password
+                  ? 'Las contraseñas deben coincidir.'
+                  : undefined
+              }
               disabled={pending}
             />
-            {creating && <p className="field-help">Usa al menos 8 caracteres.</p>}
-          </div>
+          )}
           <button className="button button--primary button--block" disabled={pending}>
             {pending
               ? 'Procesando…'
@@ -137,6 +210,8 @@ export function AccessPage() {
             setError('')
             setNotice('')
             setPassword('')
+            setConfirmation('')
+            setConfirmationChecked(false)
           }}
         >
           {creating ? 'Ya tengo una cuenta' : 'Es mi primer acceso'}

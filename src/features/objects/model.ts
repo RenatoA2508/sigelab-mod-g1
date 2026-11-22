@@ -2,6 +2,8 @@ import { z } from 'zod'
 
 export const PHOTO_LIMIT = 10 * 1024 * 1024
 export const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const dateFormatError = 'Ingresa una fecha válida en formato DD/MM/AAAA.'
+
 export const registrationSchema = z.object({
   reporter: z
     .string()
@@ -20,8 +22,14 @@ export const registrationSchema = z.object({
     .max(200, 'Usa un máximo de 200 caracteres.'),
   date: z
     .string()
+    .trim()
     .min(1, 'Ingresa la fecha del hallazgo.')
-    .refine(isCalendarDate, 'Ingresa una fecha válida.'),
+    .regex(/^\d{2}\/\d{2}\/\d{4}$/, dateFormatError)
+    .transform((value) => {
+      const [day, month, year] = value.split('/')
+      return `${year}-${month}-${day}`
+    })
+    .refine(isCalendarDate, dateFormatError),
   photo: z
     .custom<File>((value) => value instanceof File, 'Adjunta una fotografía del objeto.')
     .refine((file) => !file || file.size > 0, 'La imagen está vacía.')
@@ -33,7 +41,7 @@ export const registrationSchema = z.object({
 })
 
 export function isCalendarDate(value: string): boolean {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return false
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || value.startsWith('0000-')) return false
   const date = new Date(`${value}T12:00:00Z`)
   return !Number.isNaN(date.getTime()) && date.toISOString().slice(0, 10) === value
 }

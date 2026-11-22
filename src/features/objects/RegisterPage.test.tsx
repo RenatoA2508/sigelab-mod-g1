@@ -30,7 +30,7 @@ async function fill(user: ReturnType<typeof userEvent.setup>) {
   await user.type(screen.getByLabelText(/Persona que reporta/), 'Juan Pérez')
   await user.type(screen.getByLabelText(/Descripción general/), 'Mochila negra')
   await user.type(screen.getByLabelText(/Lugar del hallazgo/), 'Laboratorio de Física 1')
-  await user.type(screen.getByLabelText(/Fecha del hallazgo/), '2026-11-09')
+  await user.type(screen.getByLabelText(/Fecha del hallazgo/), '09/11/2026')
 }
 beforeEach(() => {
   vi.clearAllMocks()
@@ -75,6 +75,7 @@ describe('HU-01: formulario conectado al servicio', () => {
       expect.objectContaining({
         reporter: 'Juan Pérez',
         description: 'Mochila negra',
+        date: '2026-11-09',
         photo: file,
       }),
       expect.any(String),

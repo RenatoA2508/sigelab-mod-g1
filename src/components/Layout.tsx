@@ -82,7 +82,6 @@ export function Layout() {
             </div>
           </div>
           <div className="topbar-actions">
-            <span className="pill">Supabase configurado</span>
             {session ? (
               <button
                 className="button button--secondary button--small"

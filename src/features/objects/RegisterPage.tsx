@@ -147,15 +147,22 @@ export function RegisterPage() {
                   </label>
                   <input
                     id="date"
-                    type="date"
+                    type="text"
+                    placeholder="DD/MM/AAAA"
+                    maxLength={10}
                     required
                     {...register('date')}
                     aria-invalid={!!errors.date}
-                    aria-describedby={errors.date ? 'date-error' : undefined}
+                    aria-describedby={errors.date ? 'date-error' : 'date-help'}
                   />
                   {errors.date && (
                     <p id="date-error" className="field-error">
                       {errors.date.message}
+                    </p>
+                  )}
+                  {!errors.date && (
+                    <p id="date-help" className="field-help">
+                      Día, mes y año. Ejemplo: 09/11/2026.
                     </p>
                   )}
                 </div>

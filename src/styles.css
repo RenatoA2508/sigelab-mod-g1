@@ -175,7 +175,6 @@ a {
   font-size: 13px;
   color: #71819b;
 }
-.pill,
 .availability,
 .status-label,
 .staff-indicator {
@@ -184,7 +183,6 @@ a {
   font-size: 11px;
   font-weight: 700;
 }
-.pill,
 .staff-indicator,
 .availability {
   color: #147642;
@@ -517,6 +515,27 @@ textarea[aria-invalid='true'],
 .upload-surface--error {
   border-color: var(--error);
 }
+.password-control {
+  position: relative;
+}
+.password-control input {
+  padding-inline-end: 48px;
+}
+.password-toggle {
+  position: absolute;
+  inset-block: 2px;
+  inset-inline-end: 2px;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #465975;
+}
+.password-toggle:hover:not(:disabled) {
+  background: var(--soft-blue);
+}
 .field-help,
 .field-error {
   margin-top: 6px;
@@ -748,9 +767,6 @@ textarea[aria-invalid='true'],
   .form-grid,
   .confirmation-record {
     grid-template-columns: 1fr;
-  }
-  .pill {
-    display: none;
   }
   .tabs a {
     padding: 10px 12px;

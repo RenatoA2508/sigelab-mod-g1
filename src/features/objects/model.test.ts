@@ -5,7 +5,7 @@ const valid = {
   reporter: 'Juan Pérez',
   description: 'Mochila negra',
   location: 'Laboratorio de Física 1',
-  date: '2026-11-09',
+  date: '09/11/2026',
   photo: new File(['photo'], 'mochila.jpg', { type: 'image/jpeg' }),
 }
 describe('datos de registro', () => {
@@ -49,5 +49,12 @@ describe('datos de registro', () => {
     expect(isCalendarDate('2026-02-30')).toBe(false)
     expect(isCalendarDate('2024-02-29')).toBe(true)
     expect(displayDate('2026-11-09')).toBe('09/11/2026')
+  })
+  it('convierte la fecha del formulario a ISO y rechaza fechas inexistentes', () => {
+    expect(registrationSchema.parse(valid).date).toBe('2026-11-09')
+    expect(registrationSchema.parse({ ...valid, date: '29/02/2024' }).date).toBe('2024-02-29')
+    for (const date of ['11/28/2026', '29/02/2026', '2026-11-09', '09/11/0000']) {
+      expect(registrationSchema.safeParse({ ...valid, date }).success).toBe(false)
+    }
   })
 })
